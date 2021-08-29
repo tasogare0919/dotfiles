@@ -1,2 +1,6 @@
 # dotfiles
-My Vim configuration file
+My configuration file
+
+* Visual Studio Code
+* Brewfile
+* zsh
