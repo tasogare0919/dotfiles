@@ -18,8 +18,6 @@ path=(
     $path
 )
 
-
-
 # GitHub CLI
 eval "$(gh completion -s zsh)"
 
