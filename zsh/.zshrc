@@ -1,3 +1,5 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 #
 # Executes commands at the start of an interactive session.
 #
@@ -18,15 +20,23 @@ path=(
     $path
 )
 
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+  source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  autoload -Uz compinit && compinit
+fi
+
+PROMPT="%F{green}%n%f %F{cyan}($(arch))%f:%F{blue}%~%f$"
+
+source $(brew --prefix)/opt/zsh-git-prompt/zshrc.sh
+
+
 # GitHub CLI
 eval "$(gh completion -s zsh)"
 
 # 自動補完
 autoload -U compinit
 compinit
-
-# コマンドミスを修正
-setopt correct
 
 # ghq
 export GO111MODULE=on
@@ -48,31 +58,63 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 export EDITOR=vim
 
-export PATH="$HOME/.rbenv/bin:$PATH"
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-
-
 #alias
 alias vi='vim'
-
-# git prompt
-autoload -Uz vcs_info
-setopt prompt_subst
-## vcs_info_msg_0_変数をどのように表示するかフォーマットの指定  %b: ブランチ名
-zstyle ':vsc_info:git:*' formats '%b'
-precmd () { vcs_info }
-export PROMPT='[%D %* %K{250} %F{016}%C%k%K{118}%f%F{250} %f%F{016}%{${vcs_info_msg_0_}%f%k%F{118} %f]'
-
-# git のカラー表示
-git config --global color.ui auto
+alias la='ls -la'
+alias lt='ls -lrt'
 
 # git ailias
 alias g='git'
 alias gs='git status'
 alias gb='git branch'
+alias gsw='git switch'
 
-
+# gh alias
+alias ghpr='gh pr list -s all -a tasogare0919'
+gcre() {
+    echo "Type repository name: " && read name;
+    echo "Type repository description: " && read description;
+    gh repo create ${name} --description ${description} --private
+    git init && echo "# ${name}" > README.md && git add . && git status && git commit -m "First commit"
+    git branch -M develop
+    git remote add origin https://github.com/tasogare0919/${name}.git;
+    git push -u origin develop;
+}
 
 ZSH_THEME="candy"
 export PATH=$PATH:~/.bin
 
+eval "$(gh completion -s zsh)"
+eval "$(direnv hook zsh)"
+
+export LDFLAGS="-L/usr/local/opt/bzip2/lib"
+export CPPFLAGS="-I/usr/local/opt/bzip2/include"
+export PATH="/usr/local/opt/bzip2/bin:$PATH"
+eval "$(rbenv init -)"
+export GPG_TTY=$TTY
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
+source /Users/tady/.config/op/plugins.sh
+source ~/.config/op/plugins.sh
+export PATH="/opt/homebrew/sbin:$PATH"
+
+# git-promptの読み込み
+source ~/.zsh/git-prompt.sh
+
+# git-completionの読み込み
+fpath=(~/.zsh $fpath)
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+autoload -Uz compinit && compinit
+
+# プロンプトのオプション表示設定
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUPSTREAM=auto
+
+# プロンプトの表示設定(好きなようにカスタマイズ可)
+setopt PROMPT_SUBST ; PS1='%F{cyan}%~%f %F{red}$(__git_ps1 "(%s)")%f$ '
+
+# Flutter
+export PATH=$PATH:/Users/tady/workspace/src/flutter/bin
