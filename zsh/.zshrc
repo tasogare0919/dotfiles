@@ -1,3 +1,6 @@
+export PATH="/usr/local/opt/mysql@8.0/bin:$PATH"
+export PATH="$HOME/.gem/ruby/3.1.0/bin:$PATH"
+
 # Fig pre block. Keep at the top of this file.
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 #
@@ -43,31 +46,29 @@ export GO111MODULE=on
 export GOPATH=$(go env GOPATH)
 export PATH=$PATH:$GOPATH/bin
 
-bindkey '^]' peco-src
 function peco-src(){
 	local src=$(ghq list --full-path|peco --query "$LBUFFER")
 	if [ -n "$src" ]; then
 		BUFFER="cd $src"
 		zle accept-line
 	fi
-	zle -R -c
+	zle clear-screen
 }
 zle -N peco-src
+bindkey '^]' peco-src
 #libpq
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 export EDITOR=vim
 
 #alias
-alias vi='vim'
+alias vi='cursor'
 alias la='ls -la'
 alias lt='ls -lrt'
 
 # git ailias
 alias g='git'
-alias gs='git status'
-alias gb='git branch'
-alias gsw='git switch'
+compdef g=git
 
 # gh alias
 alias ghpr='gh pr list -s all -a tasogare0919'
@@ -95,8 +96,8 @@ export GPG_TTY=$TTY
 
 # Fig post block. Keep at the bottom of this file.
 [[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.post.zsh"
-source /Users/tady/.config/op/plugins.sh
-source ~/.config/op/plugins.sh
+#source /Users/tady/.config/op/plugins.sh
+#source ~/.config/op/plugins.sh
 export PATH="/opt/homebrew/sbin:$PATH"
 
 # git-promptの読み込み
@@ -118,3 +119,26 @@ setopt PROMPT_SUBST ; PS1='%F{cyan}%~%f %F{red}$(__git_ps1 "(%s)")%f$ '
 
 # Flutter
 export PATH=$PATH:/Users/tady/workspace/src/flutter/bin
+
+# bun completions
+[ -s "/Users/tady/.bun/_bun" ] && source "/Users/tady/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# starship
+eval "$(starship init zsh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+source "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "/opt/homebrew/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+
+# Rust
+export PATH=$PATH:$HOME/.cargo/env
+
+
+# Nix
+# export DARWIN_USER=$(whoami)
+# export DARWIN_HOST=$(hostname -s)
+export PATH="${AQUA_ROOT_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/aquaproj-aqua}/bin:$PATH"
