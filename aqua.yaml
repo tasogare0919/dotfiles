@@ -12,3 +12,6 @@ registries:
 packages:
 - name: fujiwara/ecrm@v0.6.0
 - name: hashicorp/terraform@v1.9.8
+- name: suzuki-shunsuke/pinact@v1.1.2
+- name: suzuki-shunsuke/github-comment@v6.3.1
+- name: takaishi/tfclean@v0.0.8
